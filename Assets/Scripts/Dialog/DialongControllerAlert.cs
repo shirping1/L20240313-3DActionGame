@@ -1,58 +1,65 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections;
 using UnityEngine.UI;
 
-// 알림창
-public class DialongControllerAlert : DialogController
+public class DialogControllerAlert : DialogController
 {
-    // 제목
     public Text LabelTitle;
+    public Text LabelMessage;
 
-    // 내용
-    public Text labelMessage;
-    
-
-    // 클래스에서 전달할 알림창의 데이터를 객체 선언
-    DialogDataAlert Data { get; set; }
-
-    public void OnClickOk()
+    DialogDataAlert Data
     {
-        if(Data != null && Data.Callback != null)
-        {
-            Data.Callback();
-        }
-        // 작업이 끝난 후 현재의 팝업 창을 관리자에서 제거
-        DialogManager.Instance.Pop();
+        get;
+        set;
     }
 
+    DialogControllerAlert()
+    {
+        // 매니저 객체에 확인창 등록
+        DialogManager.Instance.Regist(DialogType.Alert, this);
+
+    }
+
+    #region Virtual override
     public override void Awake()
     {
         base.Awake();
+    }
+
+    public override void Start()
+    {
+        base.Start();
+
     }
 
     public override void Build(DialogData data)
     {
         base.Build(data);
 
-        // 데이터가 알람이 아닐 경우
-        if(!(data is DialogDataAlert))
+        // 데이터가 없을 때 Build실행 시 로그를 남김
+        if (!(data is DialogDataAlert))
         {
-            // 에러 메시지 출력
-            Debug.LogError("Invaild dialog data!");
-            return; // 작업 종료
+            Debug.LogError("Invalid dialog data!");
+            return;
         }
-        // 데이터를 안내 데이터로써 받아오겠습니다.
+
         Data = data as DialogDataAlert;
-        // 텍스트 값에 데이터의 속성을 적용합니다.
         LabelTitle.text = Data.Title;
-        labelMessage.text = Data.Message;
+        LabelMessage.text = Data.Message;
     }
 
-    public override void Update()
+    #endregion
+
+    public void OnClickOK()
     {
-        base.Update();
-        // 인스턴스를 통해 Alert 타입의 컨트롤러를 다루고 있음을 등록
-        DialogManager.Instance.Regist(DialogType.Alert, this);
+        // 데이터, 콜백 다 존재하면
+        // calls child's callback
+        if (Data != null && Data.Callback != null)
+        {
+            // 데이터에 대한 콜백 함수 호출
+            Data.Callback();
+            // 매니저 객체를 통해 ㅎ팝업을 매니저에서 제거
+            DialogManager.Instance.Pop();
+        }
     }
 }

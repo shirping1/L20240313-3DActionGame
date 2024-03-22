@@ -55,11 +55,11 @@ public class PlayerHealth : MonoBehaviour
     }
     public void Death()
     {
-        StageController.instance.FinishGame();
         isDead = true;
         anim.SetTrigger("Die");
         playerMovement.enabled = false;
         deadText.SetActive(true);
+        StageController.instance.FinishGame();
     }
 }
 

@@ -11,12 +11,20 @@ public class UIManager : MonoBehaviour
     public InputField damageInputField;
     public Text damageText;
 
+    public InputField armorInputField;
+    public Text armorText;
+
+    public InputField levelInputField;
+    public Text levelText;
+
     public InputField searchInputField;
 
-    public Image exImage;
+    public Image potionImage;
+    public Image sowrdImage;
     public Image itemImage;
 
     Dictionary<string, string[]> itemsInfo = new Dictionary<string, string[]>();
+    Dictionary<string, Sprite> itemsImage = new Dictionary<string, Sprite>();
 
     // Start is called before the first frame update
     void Start()
@@ -28,6 +36,12 @@ public class UIManager : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void OnClickLevelInput()
+    {
+        levelText.text = levelInputField.text;
+        levelInputField.text = "";
     }
 
     public void OnClickNameInput()
@@ -42,23 +56,40 @@ public class UIManager : MonoBehaviour
         damageInputField.text = "";
     }
 
+    public void OnClickArmorInput()
+    {
+        armorText.text = "방어력 : " + armorInputField.text;
+        armorInputField.text = "";
+    }
+
+
     public void OnClickSave()
     {
-        string[] info = new string[] { damageText.text };
+        string[] itemInfo = new string[] { damageText.text, armorText.text, levelText.text };
 
-        itemsInfo.Add(nameText.text, info);
+        itemsInfo.Add(nameText.text, itemInfo);
+        itemsImage.Add(nameText.text, itemImage.sprite);
 
+        itemImage.sprite = null;
         nameText.text = "";
         damageText.text = "공격력 : ";
+        armorText.text = "방어력 : ";
+        levelText.text = "착용레벨 : ";
     }
 
     public void OnClickSearch()
     {
         if (itemsInfo.ContainsKey(searchInputField.text))
         {
-            string[] info = itemsInfo[searchInputField.text];
+            string[] itemInfo = itemsInfo[searchInputField.text];
+            Sprite loadImage = itemsImage[searchInputField.text];
+
+            itemImage.sprite = loadImage;
             nameText.text = searchInputField.text;
-            damageText.text = info[0];
+            
+            damageText.text = itemInfo[0];
+            armorText.text = itemInfo[1];
+            levelText.text = itemInfo[2];   
         }
         else
         {
@@ -67,8 +98,13 @@ public class UIManager : MonoBehaviour
         searchInputField.text = "";
     }
 
-    public void ImageInput()
+    public void PotionImageInput()
     {
+        itemImage.sprite = potionImage.sprite;
+    }
 
+    public void SowrdImageInput()
+    {
+        itemImage.sprite = sowrdImage.sprite;
     }
 }
